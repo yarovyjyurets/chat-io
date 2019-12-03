@@ -1,0 +1,2 @@
+preventSubmitForm();
+handleSocketIO();

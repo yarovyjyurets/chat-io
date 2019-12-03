@@ -1,0 +1,38 @@
+<!doctype html>
+<html>
+
+<head>
+  <title>Socket.IO chat</title>
+  <link rel="stylesheet" href="/css/chat.css">
+</head>
+
+<body>
+  <header>
+    <h1>Super Chat</h1>
+  </header>
+
+  <div id="change_username">
+    <input id="username" type="text" autocomplete="off" value="Anonymous" />
+    <button id="send_username" type="button">Change username</button>
+  </div>
+
+  <div>
+    Count of users: <span id="users-counter"></span>
+  </div>
+
+  <form id="chat-form" action="">
+    <input id="input-message" autocomplete="off" />
+    <button id="send-message-btn">Send</button>
+  </form>
+
+  <div id="chat">
+    <ul id="messages"></ul>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/utils.js"></script>
+  <script src="/js/chat.js"></script>
+  <script src="/js/main.js"></script>
+</body>
+
+</html>
