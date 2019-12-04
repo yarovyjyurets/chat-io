@@ -50,24 +50,27 @@ h1 {
 }
 
 .message {
-  padding: 5px 20px;
+  padding: 5px 10px;
   color: #b4eeff;
   background-color: rgba(52, 81, 95, 0.9);
-  border-radius: 50px;
+  border-radius: 10px;
   box-shadow: 0px 15px 5px 0px rgba(0, 0, 0, 0.5);
-  margin-bottom: 15px;
+  margin: 0;
+  position: relative;
 }
 
 .message p {
   margin: 0;
 }
 
-.message.left {
-  padding: 15px 20px 15px 70px;
+.left {}
+
+.right {
+  align-self: flex-end;
+  margin: 25px 0;
 }
 
-.message.right {
-  align-self: flex-end;
+.right .message {
   padding: 5px 25px;
   background-color: rgba(32, 147, 228, 0.9);
 }
@@ -77,4 +80,48 @@ h1 {
   padding: 0;
   font-size: small;
   color: #ab83a7;
+  margin: 10px 0;
+}
+
+.message-info p {
+  margin: 0;
+}
+
+.user-nickname {
+  margin: 0;
+  padding: 0;
+  color: #9454ce;
+  margin: 12px 0;
+}
+
+.right p.message:after {
+  content: "";
+  position: absolute;
+  margin-top: -1px;
+  margin-left: -5px;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 10px solid rgba(32, 147, 228, 0.9);
+  right: 3px;
+  top: -7px;
+}
+
+.left p.message:before {
+  content: "";
+  position: absolute;
+  margin-top: -1px;
+  margin-left: -5px;
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-bottom: 10px solid rgba(52, 81, 95, 0.9);
+  top: -7px;
+  left: 10px;
+}
+
+.msg-left {
+  padding: 5px 10px 5px 15px;
+}
+
+.msg-right {
+  padding: 5px 15px 5px 10px;
 }
