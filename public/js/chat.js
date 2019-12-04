@@ -8,9 +8,13 @@ const EVENTS = {
   USERS_COUNT: 'users_count',
   USER_LOGIN: 'user_login',
   USER_LOGOUT: 'user_logout',
+  USER_IS_TYPING: 'user_is_typing',
+  USER_IS_NOT_TYPING: 'user_is_not_typing',
+  TYPING_USERS: 'typing_users',
 }
 
-let isLoggedIn = false;
+let IS_LOGGED_IN = false;
+let USER_NICK_NAME = null;
 
 function handleSocketIO() {
   const socket = io();
@@ -22,6 +26,8 @@ function handleSocketIO() {
     handleUserLoginBtnCLick,
     handleOtherUserLoginEvent,
     handleOtherUserLogoutEvent,
+    handleUserIsTyping,
+    handleUsersTyping,
   )(socket);
 }
 
@@ -31,9 +37,51 @@ function handleSocketIO() {
  * BUSINESS LOGIC FUNCTIONS
  * 
  */
+function handleUsersTyping(socket) {
+  socket.on(EVENTS.TYPING_USERS, (users) => {
+    const typingInfo = document.getElementById('typing-users-info');
+    if (!users) {
+      typingInfo.textContent = '';
+    } else {
+      typingInfo.textContent = `${users} typing...`;
+    }
+  });
+}
+
+function handleUserIsTyping(socket) {
+  let USER_IS_TYPING = false;
+  let USER_IS_TYPING_TIMER = null;
+  const USER_IS_TYPING_TIME_DELAY = 1000;
+
+  const removeUserTyping = () => {
+    USER_IS_TYPING = false;
+    socket.emit(EVENTS.USER_IS_NOT_TYPING, { userNickName: USER_NICK_NAME });
+  }
+
+  const msgInput = document.getElementById('input-message');
+  if (msgInput) {
+    msgInput.addEventListener('keyup', function (e) {
+      if (e.keyCode === 13) {
+        clearTimeout(USER_IS_TYPING_TIMER);
+        socket.emit(EVENTS.USER_IS_NOT_TYPING, { userNickName: USER_NICK_NAME });
+        return;
+      }
+
+      if (USER_IS_TYPING) {
+        clearTimeout(USER_IS_TYPING_TIMER);
+        USER_IS_TYPING_TIMER = setTimeout(removeUserTyping, USER_IS_TYPING_TIME_DELAY);
+      } else {
+        USER_IS_TYPING = true;
+        socket.emit(EVENTS.USER_IS_TYPING, { userNickName: USER_NICK_NAME });
+        USER_IS_TYPING_TIMER = setTimeout(removeUserTyping, USER_IS_TYPING_TIME_DELAY);
+      }
+    })
+  }
+}
+
 function handleOtherUserLoginEvent(socket) {
   socket.on(EVENTS.USER_LOGIN, (userNickName) => {
-    if (isLoggedIn) {
+    if (IS_LOGGED_IN) {
       const msg = `${userNickName} joined the conversation`;
       addMessage({ msg }, {
         classes: {
@@ -47,8 +95,7 @@ function handleOtherUserLoginEvent(socket) {
 
 function handleOtherUserLogoutEvent(socket) {
   socket.on(EVENTS.USER_LOGOUT, (userNickName) => {
-    console.log('USER_LOGOUTUSER_LOGOUTUSER_LOGOUTUSER_LOGOUT')
-    if (isLoggedIn) {
+    if (IS_LOGGED_IN) {
       const msg = `${userNickName} left the conversation`;
       addMessage({ msg }, {
         classes: {
@@ -70,7 +117,8 @@ function handleUserLoginBtnCLick(socket) {
         return
       }
 
-      isLoggedIn = true;
+      USER_NICK_NAME = userNickName
+      IS_LOGGED_IN = true;
       socket.emit(EVENTS.USER_LOGIN, userNickName);
       document.getElementById('login-component').style.display = 'none';
       document.getElementById('welcome').innerHTML = `Welcome: ${userNickName}`;
