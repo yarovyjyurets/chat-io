@@ -4,29 +4,45 @@
 <head>
   <title>Socket.IO chat</title>
   <link rel="stylesheet" href="/css/chat.css">
+  <link rel="stylesheet" href="/css/login.css">
 </head>
 
 <body>
+
   <header>
     <h1>Super Chat</h1>
   </header>
 
-  <div id="change_username">
-    <input id="username" type="text" autocomplete="off" value="Anonymous" />
-    <button id="send_username" type="button">Change username</button>
-  </div>
+  <section id="chat-component">
+    <h2 id="welcome"></h2>
+    <div id="change_username">
+      <input id="username" type="text" autocomplete="off" value="Anonymous" />
+      <button id="send_username" type="button" class="btn btn-primary btn-large">Change username</button>
+    </div>
 
-  <div>
-    Count of users: <span id="users-counter"></span>
-  </div>
+    <div id="users-count">
+      Count of users: <span id="users-counter"></span>
+    </div>
 
-  <form id="chat-form" action="">
-    <input id="input-message" autocomplete="off" />
-    <button id="send-message-btn">Send</button>
-  </form>
+    <div class="chat-container">
+      <ul id="messages" class="chat"></ul>
+    </div>
 
-  <div id="chat">
-    <ul id="messages"></ul>
+    <form id="chat-input-container" action="">
+      <input id="input-message" autocomplete="off" placeholder="Type your message..."/>
+      <button id="send-message-btn" class="btn btn-primary btn-block btn-large">Send</button>
+    </form>
+
+  </section>
+
+  <section id="login-component">
+    <div class="login">
+      <h1>Login</h1>
+      <input type="text" id="nick-name" placeholder="Nickname" required="required" />
+      <button id="login-btn" class="btn btn-primary btn-block btn-large">Let me chat in!</button>
+    </div>
+  </section>
+
   </div>
 
   <script src="/socket.io/socket.io.js"></script>

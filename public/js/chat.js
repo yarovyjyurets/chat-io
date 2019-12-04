@@ -5,8 +5,10 @@ const EVENTS = {
   NEW_MSG: 'new_msg',
   NEW_USER: 'new_user',
   USERS_COUNT: 'users_count',
+  USER_LOGIN: 'user_login',
 }
 
+let isLoggedIn = false;
 
 function handleSocketIO() {
   const socket = io();
@@ -16,6 +18,8 @@ function handleSocketIO() {
     handleNewMessage,
     handleUserCount,
     handleNewUser,
+    handleUserLoginBtnCLick,
+    handleOtherUserLoginEvent,
   )(socket);
 }
 
@@ -25,6 +29,34 @@ function handleSocketIO() {
  * BUSINESS LOGIC FUNCTIONS
  * 
  */
+function handleOtherUserLoginEvent(socket) {
+  socket.on(EVENTS.USER_LOGIN, (userNickname) => {
+    if (isLoggedIn) {
+      console.log('???')
+      console.log('userNickName')
+    }
+  });
+}
+
+function handleUserLoginBtnCLick(socket) {
+  const msgBtn = document.getElementById('login-btn');
+  if (msgBtn) {
+    msgBtn.addEventListener('click', async () => {
+      const inputMsg = document.getElementById('nick-name');
+      const userNickname = inputMsg.value;
+      if (!userNickname) {
+        return
+      }
+
+      isLoggedIn = true;
+      socket.emit(EVENTS.USER_LOGIN, userNickname);
+      document.getElementById('login-component').style.display = 'none';
+      document.getElementById('welcome').innerHTML = `Welcome: ${userNickname}`;
+      document.getElementById('chat-component').style.display = 'block';
+    });
+  }
+}
+
 function handleNewMessagBtnCLick(socket) {
   const msgBtn = document.getElementById('send-message-btn');
   if (msgBtn) {
@@ -36,34 +68,52 @@ function handleNewMessagBtnCLick(socket) {
       }
       socket.emit(EVENTS.NEW_MSG, msg);
       inputMsg.value = '';
+      addMessage(msg, { classes: ['message', 'right'] });
+      scrollToBottom();
     });
   }
 }
 
 function preventSubmitForm() {
-  const form = document.getElementById('chat-form');
+  const form = document.getElementById('chat-input-container');
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
   }, true);
 }
 
 function handleNewMessage(socket) {
-  socket.on(
-    EVENTS.NEW_MSG,
-    (msg) => {
-      const ul = document.getElementById("messages");
-      const li = document.createElement("li");
-      li.appendChild(document.createTextNode(msg));
-      ul.appendChild(li);
-    });
+  socket.on(EVENTS.NEW_MSG, (msg) => {
+    addMessage(msg, { classes: ['message'] });
+    scrollToBottom();
+  });
 }
 
 function handleNewUser(socket) {
-  socket.on(
-    EVENTS.NEW_USER,
-    (msg) => {
-      console.log('handleNewUser', msg);
-    });
+  socket.on(EVENTS.NEW_USER, (msg) => {
+    console.log('handleNewUser', msg);
+  });
+}
+
+function addMessage(msg, { classes }) {
+  const ul = document.getElementById("messages");
+  const li = document.createElement("li");
+  const p = document.createElement("p");
+  li.appendChild(p.appendChild(document.createTextNode(msg)));
+  classes.forEach(className => {
+    li.classList.add(className);
+  });
+  ul.appendChild(li);
+}
+
+function scrollToBottom() {
+  const chat = document.querySelector('.chat-container');
+  const shouldScroll = chat.scrollTop + chat.clientHeight === chat.scrollHeight;
+  console.log('??', chat);
+  if (!shouldScroll) {
+    chat.scrollTop = chat.scrollHeight;
+  }
+
+  // window.scrollTo(0, document.querySelector('.chat-container').scrollHeight);
 }
 
 function handleUserCount(socket) {
