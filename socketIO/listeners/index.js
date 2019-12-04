@@ -3,9 +3,9 @@ const EVENTS = {
   CONNCETION: 'connection',
   DISCONNECT: 'disconnect',
   NEW_MSG: 'new_msg',
-  NEW_USER: 'new_user',
   USERS_COUNT: 'users_count',
   USER_LOGIN: 'user_login',
+  USER_LOGOUT: 'user_logout',
 }
 
 let _liveConnections = 0;
@@ -15,13 +15,12 @@ const disconectHandler = (io, socket) => {
   socket.on(EVENTS.DISCONNECT, () => {
     console.log('Client disconnected');
     io.emit(EVENTS.USERS_COUNT, { usersCounter: --_liveConnections });
-    // socket.broadcast.emit(EVENTS.NEW_USER, { userName: `${DEFAULT_USER_NAME}${_liveConnections}` });
+    socket.broadcast.emit(EVENTS.USER_LOGOUT, socket.userNickname);
   });
 }
 const newConnectionHandler = (io, socket) => {
   console.log('New client connected');
   io.emit(EVENTS.USERS_COUNT, { usersCounter: ++_liveConnections });
-  // socket.broadcast.emit(EVENTS.NEW_USER, { userName: `${DEFAULT_USER_NAME}${_liveConnections}` });
 }
 
 const newMessageHandler = (io, socket) => {

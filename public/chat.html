@@ -29,7 +29,7 @@
     </div>
 
     <form id="chat-input-container" action="">
-      <input id="input-message" autocomplete="off" placeholder="Type your message..."/>
+      <input id="input-message" autocomplete="off" placeholder="Type your message..." />
       <button id="send-message-btn" class="btn btn-primary btn-block btn-large">Send</button>
     </form>
 
@@ -38,8 +38,10 @@
   <section id="login-component">
     <div class="login">
       <h1>Login</h1>
-      <input type="text" id="nick-name" placeholder="Nickname" required="required" />
-      <button id="login-btn" class="btn btn-primary btn-block btn-large">Let me chat in!</button>
+      <form id="login-form">
+        <input type="text" id="nick-name" placeholder="Nickname" required="required" />
+        <button id="login-btn" type="submit" class="btn btn-primary btn-block btn-large">Let me chat in!</button>
+      </form>
     </div>
   </section>
 

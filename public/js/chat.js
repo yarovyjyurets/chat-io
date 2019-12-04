@@ -6,6 +6,7 @@ const EVENTS = {
   NEW_USER: 'new_user',
   USERS_COUNT: 'users_count',
   USER_LOGIN: 'user_login',
+  USER_LOGOUT: 'user_logout',
 }
 
 let isLoggedIn = false;
@@ -17,9 +18,9 @@ function handleSocketIO() {
     handleNewMessagBtnCLick,
     handleNewMessage,
     handleUserCount,
-    handleNewUser,
     handleUserLoginBtnCLick,
     handleOtherUserLoginEvent,
+    handleOtherUserLogoutEvent,
   )(socket);
 }
 
@@ -32,8 +33,16 @@ function handleSocketIO() {
 function handleOtherUserLoginEvent(socket) {
   socket.on(EVENTS.USER_LOGIN, (userNickname) => {
     if (isLoggedIn) {
-      console.log('???')
-      console.log('userNickName')
+      addMessage(`${userNickname} joined the conversation`, { classes: ['message-info'] });
+    }
+  });
+}
+
+function handleOtherUserLogoutEvent(socket) {
+  socket.on(EVENTS.USER_LOGOUT, (userNickname) => {
+    console.log('USER_LOGOUTUSER_LOGOUTUSER_LOGOUTUSER_LOGOUT')
+    if (isLoggedIn) {
+      addMessage(`${userNickname} left the conversation`, { classes: ['message-info'] });
     }
   });
 }
@@ -52,7 +61,7 @@ function handleUserLoginBtnCLick(socket) {
       socket.emit(EVENTS.USER_LOGIN, userNickname);
       document.getElementById('login-component').style.display = 'none';
       document.getElementById('welcome').innerHTML = `Welcome: ${userNickname}`;
-      document.getElementById('chat-component').style.display = 'block';
+      document.getElementById('chat-component').style.display = 'flex';
     });
   }
 }
@@ -74,8 +83,8 @@ function handleNewMessagBtnCLick(socket) {
   }
 }
 
-function preventSubmitForm() {
-  const form = document.getElementById('chat-input-container');
+function preventSubmitForm(id) {
+  const form = document.getElementById(id);
   form.addEventListener('submit', (evt) => {
     evt.preventDefault();
   }, true);
@@ -85,12 +94,6 @@ function handleNewMessage(socket) {
   socket.on(EVENTS.NEW_MSG, (msg) => {
     addMessage(msg, { classes: ['message'] });
     scrollToBottom();
-  });
-}
-
-function handleNewUser(socket) {
-  socket.on(EVENTS.NEW_USER, (msg) => {
-    console.log('handleNewUser', msg);
   });
 }
 
