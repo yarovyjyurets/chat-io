@@ -3,7 +3,8 @@ const app = express();
 
 app.use(express.static('public'))
 app.get('*', (req, res, next) => {
-  res.send(`<h1>Hello!!! Welocme to <a href="http://10.25.9.35:3000/chat.html">CHAT-SERVER >>></a>!<h1>`);
+  const url = `${req.protocol}://${req.get('host')}`;
+  res.send(`<h1>Hello!!! Welocme to <a href="${url}/chat.html">CHAT-SERVER >>></a>!<h1>`);
 });
 
-module.exports = app; 
+module.exports = app;
